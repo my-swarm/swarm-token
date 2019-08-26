@@ -1,0 +1,21 @@
+{
+  "name": "swarm-token",
+  "version": "0.0.1",
+  "description": "SWARM ERC20 token",
+  "scripts": {},
+  "private": true,
+  "dependencies": {
+    "chai": "^4.2.0",
+    "openzeppelin-solidity": "2.3.0",
+    "openzeppelin-test-helpers": "^0.4.2"
+  },
+  "devDependencies": {},
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "MVPWorkshop",
+  "license": "ISC",
+  "repository": "git@github.com:MVPWorkshop/swarm-token.git"
+}
