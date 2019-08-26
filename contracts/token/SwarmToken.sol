@@ -31,16 +31,16 @@ contract SwarmToken is ERC20Burnable, ERC20Detailed, Controlled {
      *
      * Returns a boolean value indicating whether the operation succeeded.
      *
-     * Beware that changing an allowance with this method brings the risk
-     * that someone may use both the old and the new allowance by unfortunate
-     * transaction ordering. One possible solution to mitigate this race
-     * condition is to first reduce the spender's allowance to 0 and set the
-     * desired value afterwards:
-     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-     *
      * Emits an `Approval` event.
+     *
+     * Requirements:
+     *
+     * - `value` has to be zero or current allowance for `spender` has to be a zero.
+     * This is to avoid https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
      */
     function approveAndCall(address spender, uint256 value, bytes memory extraData) public returns (bool) {
+        require(value == 0 || allowance(msg.sender, spender) == 0, 'SwarmToken: not clean allowance state');
+
         _approve(msg.sender, spender, value);
         ISwarmTokenRecipient(spender).receiveApproval(msg.sender, value, address(this), extraData);
         return true;

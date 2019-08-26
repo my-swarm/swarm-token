@@ -64,16 +64,32 @@ contract('SwarmToken', async function ([_, creator, controller, initialHolder, a
 
         describe('when spender implements ISwarmTokenRecipient', function () {
             it('should succeed if its callback succeeds', async function() {
-                const spender = await NoopSwarmTokenRecipient.new({ from: creator });
+                const spender = await NoopSwarmTokenRecipient.new({ from: anotherAccount });
                 await this.token.approveAndCall(spender.address, amount, '0x0', { from: initialHolder });
             });
 
             it('should transfer all approved tokens successfully', async function() {
-                const spender = await SwarmTokenRecipient.new({ from: creator });
+                const spender = await SwarmTokenRecipient.new({ from: anotherAccount });
                 await this.token.approveAndCall(spender.address, totalSupply, '0x0', { from: initialHolder });
 
                 expect(await this.token.balanceOf(initialHolder)).to.be.bignumber.equal(new BN(0));
                 expect(await this.token.balanceOf(spender.address)).to.be.bignumber.equal(totalSupply);
+            });
+
+            it('should not allow changing non-zero allowance', async function() {
+                const spender = await NoopSwarmTokenRecipient.new({ from: anotherAccount });
+                await this.token.approveAndCall(spender.address, amount, '0x0', { from: initialHolder });
+
+                expectRevert(this.token.approveAndCall(spender.address, amount, '0x0', { from: initialHolder }),
+                    'SwarmToken: not clean allowance state'
+                );
+            });
+
+            it('should allow call with zeroing allowance', async function() {
+                const spender = await NoopSwarmTokenRecipient.new({ from: anotherAccount });
+                await this.token.approveAndCall(spender.address, amount, '0x0', { from: initialHolder });
+                await this.token.approveAndCall(spender.address, new BN(0), '0x0', { from: initialHolder });
+                expect(await this.token.allowance(initialHolder, spender.address)).to.be.bignumber.equal(new BN(0));
             });
         });
     });
