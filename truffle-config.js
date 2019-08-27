@@ -71,7 +71,7 @@ module.exports = {
 
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
-    rinkeby: {
+    rinkebyMnemonic: {
       provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${infuraKey}`),
       network_id: 4,       // rinkeby's id
       gas: 5500000,        // rinkeby has a lower block limit than mainnet
@@ -134,7 +134,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: '0.5.10',    // Fetch exact version from solc-bin (default: truffle's version)
+      version: '^0.5.11',    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
