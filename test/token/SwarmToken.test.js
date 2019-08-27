@@ -128,7 +128,7 @@ contract('SwarmToken', async function ([_, creator, controller, initialHolder, a
         });
     });
 
-    describe('claimEthers functionality', function() {
+    describe('claimEther functionality', function() {
         const amount = ether('1');
 
         it('should allow ETH transfers to contract', async function() {
@@ -138,7 +138,7 @@ contract('SwarmToken', async function ([_, creator, controller, initialHolder, a
         });
 
         it('should not allow ETH retrieval by non-controller account', async function() {
-            await expectRevert(this.token.claimEthers({ from: anotherAccount }),
+            await expectRevert(this.token.claimEther({ from: anotherAccount }),
                 'Controlled: caller is not the controller address'
             );
         });
@@ -146,15 +146,15 @@ contract('SwarmToken', async function ([_, creator, controller, initialHolder, a
         it('should retrieve all of ETH by controller account', async function() {
             const balanceTracker = await balance.tracker(controller);
             await this.token.send(amount);
-            await this.token.claimEthers({ from: controller, gasPrice: 0 });
+            await this.token.claimEther({ from: controller, gasPrice: 0 });
             expect(await balanceTracker.delta()).to.be.bignumber.equal(amount);
         });
 
-        it('should emit ClaimedEthers event', async function() {
+        it('should emit ClaimedEther event', async function() {
             await this.token.send(amount);
-            const { logs } = await this.token.claimEthers({ from: controller, gasPrice: 0 });
+            const { logs } = await this.token.claimEther({ from: controller, gasPrice: 0 });
 
-            expectEvent.inLogs(logs, 'ClaimedEthers', {
+            expectEvent.inLogs(logs, 'ClaimedEther', {
                 controller: controller,
                 amount: amount,
             });

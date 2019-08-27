@@ -8,7 +8,7 @@ import "./ISwarmTokenRecipient.sol";
 
 contract SwarmToken is ERC20Burnable, ERC20Detailed, Controlled {
     event ClaimedTokens(address indexed token, address indexed controller, uint256 amount);
-    event ClaimedEthers(address indexed controller, uint256 amount);
+    event ClaimedEther(address indexed controller, uint256 amount);
 
     constructor(
         address controller,
@@ -71,17 +71,17 @@ contract SwarmToken is ERC20Burnable, ERC20Detailed, Controlled {
      *
      * Returns a boolean value indicating whether the operation succeeded.
      *
-     * Emits an `ClaimedEthers` event.
+     * Emits an `ClaimedEther` event.
      *
      * Requirements:
      *
      * - `msg.sender` has to be controller of this contract.
      */
-    function claimEthers() public onlyController returns (bool) {
+    function claimEther() public onlyController returns (bool) {
         uint256 balance = address(this).balance;
         msg.sender.transfer(balance);
 
-        emit ClaimedEthers(msg.sender, balance);
+        emit ClaimedEther(msg.sender, balance);
 
         return true;
     }
