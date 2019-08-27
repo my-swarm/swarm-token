@@ -117,7 +117,7 @@ contract SwarmToken is ISwarmTokenControlled, ERC20Burnable, ERC20Detailed, Cont
      * @dev Allow contract to receive ether, prevent fallback
      * calls for functions that are not available.
      */
-    function () external payable {
+    function() external payable {
         require(msg.data.length == 0);
     }
 
