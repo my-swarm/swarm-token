@@ -1,5 +1,6 @@
 const { balance, ether, BN, constants, expectEvent, expectRevert } = require('openzeppelin-test-helpers');
 const { expect } = require('chai');
+const crypto = require('crypto');
 
 const SWM = artifacts.require('SwarmToken');
 const NoopSwarmTokenRecipient = artifacts.require('NoopSwarmTokenRecipient');
@@ -90,6 +91,34 @@ contract('SwarmToken', async function ([_, creator, controller, initialHolder, a
                 await this.token.approveAndCall(spender.address, amount, '0x0', { from: initialHolder });
                 await this.token.approveAndCall(spender.address, new BN(0), '0x0', { from: initialHolder });
                 expect(await this.token.allowance(initialHolder, spender.address)).to.be.bignumber.equal(new BN(0));
+            });
+        });
+    });
+
+    describe('token document functionality', function () {
+        const hash = crypto.createHash('sha256').update(constants.ZERO_ADDRESS).digest();
+        const hashString = '0x' + hash.toString('hex');
+        const url = 'url';
+
+        it('should not allow document update to non-controller account', async function() {
+            await expectRevert(this.token.updateDocument(hash, url, { from: anotherAccount }),
+                'Controlled: caller is not the controller address'
+            );
+        });
+
+        it('should emit DocumentUpdated event on update', async function() {
+            const { logs } = await this.token.updateDocument(hash, url, { from: controller });
+
+            expectEvent.inLogs(logs, 'DocumentUpdated', {
+                hash: hashString,
+                url: url,
+            });
+        });
+
+        it('should return correct document to any caller', async function() {
+            await this.token.updateDocument(hash, url, { from: controller });
+            expect(await this.token.getDocument({ from: anotherAccount })).to.deep.equal({
+                0: hashString, 1: url
             });
         });
     });
