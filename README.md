@@ -1,13 +1,14 @@
 ## Deployment terminal logs
 
-```$ truffle migrate --reset --network mainnetPrivateKey
+```
+$ truffle migrate --reset --network mainnetPrivateKey
 
 Compiling your contracts...
 ===========================
 > Compiling .\contracts\access\Controlled.sol
 > Compiling .\contracts\token\ISwarmTokenControlled.sol
 > Compiling .\contracts\token\ISwarmTokenRecipient.sol
-> Artifacts written to C:\Users\Filip\Desktop\code\swarm\swarm-token\build\contracts
+> Artifacts written to .\build\contracts
 > Compiled successfully using:
    - solc: 0.5.11+commit.c082d0b4.Emscripten.clang
 
@@ -28,21 +29,5 @@ Compiling your contracts...
    > value sent:          0 ETH
    > total cost:          0.02626415 ETH
 
-   Pausing for 2 confirmations...
-   ------------------------------
-   > confirmation number: 1 (block: 4984097)
-   > confirmation number: 2 (block: 4984098)
-   > confirmation number: 3 (block: 4984099)
-   > confirmation number: 4 (block: 4984100)
-   > confirmation number: 5 (block: 4984101)
-   > confirmation number: 6 (block: 4984102)  
-   > Saving artifacts
-   -------------------------------------
-   > Total cost:           0.02626415 ETH
-
-
-Summary
-=======
-> Total deployments:   1
-> Final cost:          0.02626415 ETH
+   ...
 ```
