@@ -1,3 +1,34 @@
+# Swarm token
+
+## Setup & Installation
+
+You will need to have nodejs and npm installed on your computer. Link to download if you don't  https://nodejs.org/en/download/
+
+1. After just follow this commands in terminal:
+```
+npm install -g truffle
+yarn install
+```
+
+2. Create `.env` file and copy everything from `.env.example` and fill it accordingly.
+
+## Testing
+
+To run test execute:
+
+```
+truffle test
+```
+
+## Deployment procedure
+
+To deploy contract run:
+```
+truffle migrate --reset --compile-all --network <desired_network>
+```
+
+`<desired-network>` - you can find options in `truffle-config.js`
+
 ## Deployment terminal logs
 
 ```
