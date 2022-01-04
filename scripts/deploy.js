@@ -24,6 +24,7 @@ async function main() {
     const signer = (await ethers.getSigners())[0];
     const deployNonce = parseInt(process.env.DEPLOY_NONCE);
     const predictedContractAddress = predictContractAddress(signer.address, deployNonce);
+    const tokenName = bre.network.name === 'polygon' ? 'SwarmTokenPolygon' : 'SwarmToken';
 
     let nonce;
     while ((nonce = await signer.getTransactionCount()) < deployNonce) {

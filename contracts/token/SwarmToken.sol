@@ -27,7 +27,9 @@ contract SwarmToken is ISwarmTokenControlled, ERC20Burnable, ERC20Detailed, Cont
         Controlled(controller)
         public
     {
-        _mint(initialAccount, totalSupply);
+        if (totalSupply > 0) {
+            _mint(initialAccount, totalSupply);
+        }
     }
 
     /**
