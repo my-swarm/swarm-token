@@ -1,9 +1,12 @@
 const bre = require('hardhat');
+const { getConfig, getConstructorParams, getTokenName } = require('./deploy.config');
+require('dotenv').config({ path: '.env' });
+
 const ethers = bre.ethers;
 const { AddressZero } = ethers.constants;
-const { RLP, formatUnits, parseUnits } = ethers.utils;
+const { RLP, formatUnits } = ethers.utils;
 
-require('dotenv').config({ path: '.env' });
+const networkName = bre.network.name;
 
 function predictContractAddress(address, nonce) {
     const rlpData = RLP.encode([address.toLowerCase(), ethers.utils.hexlify(nonce)])
@@ -11,57 +14,50 @@ function predictContractAddress(address, nonce) {
 }
 
 async function sendDummyTransaction() {
-    const signer = (await ethers.getSigners())[0];
-    const tx = await signer.sendTransaction({
+    const deployer = (await ethers.getSigners())[0];
+    const tx = await deployer.sendTransaction({
         to: AddressZero,
         value: 0
     });
     await tx.wait();
-    console.log('dummy transaction sent');
 }
 
 async function main() {
-    const signer = (await ethers.getSigners())[0];
-    const deployNonce = parseInt(process.env.DEPLOY_NONCE);
-    const predictedContractAddress = predictContractAddress(signer.address, deployNonce);
-    const tokenName = bre.network.name === 'polygon' ? 'SwarmTokenPolygon' : 'SwarmToken';
+    const deployer = (await ethers.getSigners())[0];
 
-    let nonce;
-    while ((nonce = await signer.getTransactionCount()) < deployNonce) {
-        console.log(`nonce too low: ${nonce}`);
+    const config = getConfig(networkName);
+    const tokenName = getTokenName(networkName);
+    const constructorParams = getConstructorParams(networkName);
+
+    const { nonce } = config;;
+    const predictedContractAddress = predictContractAddress(deployer.address, nonce);
+
+    let curNonce;
+    while ((curNonce = await deployer.getTransactionCount()) < nonce) {
+        console.log(`nonce too low: ${curNonce} - sending dummy transaction`);
         await sendDummyTransaction();
-        nonce++;
+        curNonce++;
     }
 
-    if (nonce > deployNonce) {
+    if (curNonce > nonce) {
         console.log(`Contract already deployed on ${predictedContractAddress}`);
-        const token = await ethers.getContractAt('SwarmToken', predictedContractAddress);
+        const token = await ethers.getContractAt(tokenName, predictedContractAddress);
         const supply = await token.totalSupply();
         const decimals = await token.decimals();
         console.log({
             name: await token.name(),
             symbol: await token.symbol(),
-            supply,
-            supplyEth: formatUnits(supply, decimals),
             decimals,
-            deployerBalance: await token.balanceOf(signer.address)
+            supply: formatUnits(supply, decimals),
+            deployerBalance: formatUnits(await token.balanceOf(deployer.address), decimals)
         });
-
         return;
     }
 
-    console.log(`deploying contract with nonce ${nonce}. It should have this address: ${predictedContractAddress}`);
+    console.log(`deploying as ${deployer.address} with nonce ${curNonce}. Predicted address: ${predictedContractAddress}`);
 
-    const factory = await ethers.getContractFactory('SwarmToken', signer);
-    const params = [
-        process.env.CONTROLLER_ACCOUNT,
-        process.env.TOKEN_NAME,
-        process.env.TOKEN_SYMBOL,
-        process.env.TOKEN_DECIMALS,
-        process.env.INITIAL_ACCOUNT,
-        parseUnits(process.env.TOTAL_SUPPLY, process.env.TOKEN_DECIMALS),
-    ];
-    const contract = await factory.deploy(...params);
+    const factory = await ethers.getContractFactory(tokenName, deployer);
+    const contract = await factory.deploy(...constructorParams);
     await contract.deployed();
     console.log(`Contract deployed at ${contract.address}`);
 }

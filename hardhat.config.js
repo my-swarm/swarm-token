@@ -57,7 +57,7 @@ module.exports = {
         local: {
             url: 'http://localhost:8545',
             chainId: 31337,
-            accounts: [privateKey],
+            accounts: accountsLocal,
         },
         polygon: {
             url: process.env.ALCHEMY_POLYGON,
