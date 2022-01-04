@@ -2,25 +2,26 @@
   "name": "swarm-token",
   "version": "0.0.1",
   "description": "SWARM ERC20 token",
-  "scripts": {},
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test"
+  },
   "private": true,
   "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.3",
+    "@nomiclabs/hardhat-etherscan": "^2.1.8",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
     "chai": "^4.2.0",
     "dotenv": "^8.1.0",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.5.2",
+    "hardhat": "^2.8.0",
     "openzeppelin-solidity": "2.3.0",
-    "openzeppelin-test-helpers": "^0.4.2",
-    "truffle-hdwallet-provider": "^1.0.17",
-    "truffle-plugin-verify": "^0.3.2",
-    "truffle-privatekey-provider": "^1.3.0",
     "tslib": "^1.10.0"
   },
   "devDependencies": {},
-  "main": "truffle-config.js",
-  "directories": {
-    "test": "test"
-  },
+  "main": "hardhat.config.js",
   "keywords": [],
-  "author": "MVPWorkshop",
-  "license": "ISC",
-  "repository": "git@github.com:MVPWorkshop/swarm-token.git"
+  "author": "Swarm Network",
+  "license": "MIT"
 }
