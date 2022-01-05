@@ -27,12 +27,12 @@ describe('SwarmTokenPolygon', async () => {
     });
 
     it('should have correct initial child chain manager', async () => {
-        expect(await token.childChainManagerProxy()).to.equal(childChainManager.address);
+        expect(await token.childChainManager()).to.equal(childChainManager.address);
     });
 
     it('allows controller to change the child chain mananger', async () => {
         await token.connect(controller).updateChildChainManager(alice.address);
-        expect(await token.childChainManagerProxy()).to.equal(alice.address);
+        expect(await token.childChainManager()).to.equal(alice.address);
     });
 
     it('does not allow anyone else to do that', async () => {
@@ -43,7 +43,7 @@ describe('SwarmTokenPolygon', async () => {
 
     it('does not allow the manager to be zero address', async () => {
         await expect(token.connect(controller).updateChildChainManager(AddressZero)).to.be.revertedWith(
-            "Bad ChildChainManagerProxy address"
+            "SwarmToken: Bad ChildChainManager address"
         );
     });
 
@@ -58,7 +58,7 @@ describe('SwarmTokenPolygon', async () => {
 
     it('does not allow anyone else to deposit', async () => {
         await expect(token.connect(bob).deposit(alice.address, depositData))
-            .to.be.revertedWith("You're not allowed to deposit");
+            .to.be.revertedWith("SwarmToken: only ChildChainManager can deposit");
     });
 
     it('allows anyone to withdraw', async () => {

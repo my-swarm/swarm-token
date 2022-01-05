@@ -4,7 +4,7 @@ import "./SwarmToken.sol";
 
 contract SwarmTokenPolygon is SwarmToken {
 
-    address public childChainManagerProxy;
+    address private _childChainManager;
 
     constructor(
         address controller,
@@ -15,19 +15,20 @@ contract SwarmTokenPolygon is SwarmToken {
     )
     SwarmToken(controller, name, symbol, decimals, address(0), 0)
     public {
-        childChainManagerProxy = childChainManager;
+        _childChainManager = childChainManager;
     }
 
+    function childChainManager() external view returns (address) {
+        return _childChainManager;
+    }
 
-    // being proxified smart contract, most probably childChainManagerProxy contract's address
-    // is not going to change ever, but still, lets keep it
-    function updateChildChainManager(address newChildChainManagerProxy) external onlyController {
-        require(newChildChainManagerProxy != address(0), "Bad ChildChainManagerProxy address");
-        childChainManagerProxy = newChildChainManagerProxy;
+    function updateChildChainManager(address newChildChainManager) external onlyController {
+        require(newChildChainManager != address(0), "SwarmToken: Bad ChildChainManager address");
+        _childChainManager = newChildChainManager;
     }
 
     function deposit(address user, bytes calldata depositData) external {
-        require(msg.sender == childChainManagerProxy, "You're not allowed to deposit");
+        require(msg.sender == _childChainManager, "SwarmToken: only ChildChainManager can deposit");
         uint256 amount = abi.decode(depositData, (uint256));
         _mint(user, amount);
     }
