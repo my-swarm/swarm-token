@@ -7,3 +7,4 @@ cache
 .secret
 .secret-local
 .private_key
+yarn-error.log
