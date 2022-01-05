@@ -4,61 +4,35 @@
 
 You will need to have nodejs and npm installed on your computer. Link to download if you don't  https://nodejs.org/en/download/
 
-1. After just follow this commands in terminal:
-```
-npm install -g truffle
-yarn install
-```
+Install dependencies with
 
-2. Create `.env` file and copy everything from `.env.example` and fill it accordingly.
+    yarn
 
 ## Testing
 
-To run test execute:
-
 ```
-truffle test
+yarn test
 ```
 
-## Deployment procedure
+## Deployment
 
-To deploy contract run:
-```
-truffle migrate --reset --compile-all --network <desired_network>
-```
+When deploying on a new network, make sure to
 
-`<desired-network>` - you can find options in `truffle-config.js`
+1. add the token config for the new network to `scripts/deploy.config.js`
+2. define appropriate environment variables in .env to use in hardhat config (e.g. alchemy URL, etherscan-like service URL)
+3. add the network config to `hardhat.config.js` and tweak the `etherscan` config for contract verification
+4. run `yarn deploy <network>`
 
-## Deployment terminal logs
+If you wanna maintain he same token address on additional networks, make sure to
+- deploy as `0xC39bF343CFc1083497549D7f10468769beCc79E4`
+- use nonce 78
 
-```
-$ truffle migrate --reset --network mainnetPrivateKey
+The deploy script will automatically reach the correct nonce pre-deploy
 
-Compiling your contracts...
-===========================
-> Compiling .\contracts\access\Controlled.sol
-> Compiling .\contracts\token\ISwarmTokenControlled.sol
-> Compiling .\contracts\token\ISwarmTokenRecipient.sol
-> Artifacts written to .\build\contracts
-> Compiled successfully using:
-   - solc: 0.5.11+commit.c082d0b4.Emscripten.clang
+### Bridged SWM
 
-1_deploy_token.js
-=================
+When deploying as a bridged ERC20 (which will usually be the case except for testnets, where it doesn't matter), make 
+sure to tweak the token contract to follow the specs to work with the actual Bridge.
 
-   Deploying 'SwarmToken'
-   ----------------------
-   > transaction hash:    0x1238545811395c0cd3b77149a0b10a04d51172b482d015c4c105bf3bd182216b
-   > Blocks: 1            Seconds: 12
-   > contract address:    0x3505f494c3f0fed0b594e01fa41dd3967645ca39
-   > block number:        8438475
-   > block timestamp:     1566992824
-   > account:             0xc39bf343cfc1083497549d7f10468769becc79e4
-   > balance:             0.115906022153243696
-   > gas used:            2626415
-   > gas price:           10 gwei
-   > value sent:          0 ETH
-   > total cost:          0.02626415 ETH
-
-   ...
-```
+e.g. for Polygon, we are deploying the `SwarmTokenPolygon` contract with the `deposit` and `withdraw` public methods
+implemented. For other networks, it might be the same, or different.
